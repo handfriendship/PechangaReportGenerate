@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pechanga Report Automatic Issuing</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" />
+
+  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="css/demo.css" />
+	<link rel="stylesheet" type="text/css" href="css/component.css" />
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+	<script src="js/modernizr.custom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.full.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+</head>
+<style>
+  .result-table-wrapper {border:1px solid black;}
+</style>
+<body>
+  <div class="container-fluid">
+
+    <div class="header-section">
+      <ul id="gn-menu" class="gn-menu-main">
+  			<li class="gn-trigger">
+  				<a class="gn-icon gn-icon-menu"><span>Menu</span></a>
+  				<nav class="gn-menu-wrapper">
+  					<div class="gn-scroller">
+  						<ul class="gn-menu">
+
+  							<li class="datepicker-menu gn-search-item">
+  								<input id="testDatepicker" placeholder="Add More Dates" type="text" class="gn-search">
+  								<a class="gn-icon gn-icon-search"><span>Search</span></a>
+                  <div class="checkbox-wrapper">
+                    <div class="checkbox-inner-wrap">
+                      <input class="checkbox btn btn-outline-primary" type="button" name="check" value="Add" />
+                    </div>
+                  </div>
+                  <ul id="datepicker-submenu" class="gn-submenu">
+
+  								</ul>
+  							</li>
+                <!-- <li class="campaign-menu">
+  								<a class="gn-icon gn-icon-archive">Campaigns</a>
+  								<ul class="gn-submenu">
+
+  								</ul>
+  							</li> -->
+  							<li>
+  								<a id="excel-download" class="gn-icon gn-icon-download">Excel Downloads</a>
+  							</li>
+                <li>
+  								<a id="pdf-download" class="gn-icon gn-icon-download">PDF Downloads</a>
+  							</li>
+  							<li>
+                  <a class="gn-icon gn-icon-cog">Settings</a>
+                  <ul class="gn-submenu">
+  									<li>
+                      <a class="checkbox-a gn-icon gn-icon-illustrator">Add more dates</a>
+                    </li>
+  									<li><a class="checkbox-a gn-icon gn-icon-photoshop">Add more locations</a></li>
+  								</ul>
+                </li>
+
+  							<!-- <li>
+                  <a class="gn-icon gn-icon-help">Add more Dates</a>
+                  <ul class="gn-submenu">
+  									<li>
+                      <a class="checkbox-a gn-icon gn-icon-illustrator">Jan 06, 2020 to Jan 12, 2020</a>
+                      <div class="checkbox-wrapper">
+                        <div class="checkbox-inner-wrap">
+                          <input class="checkbox" type="checkbox" name="check" value="1" />
+                        </div>
+                      </div>
+                    </li>
+  									<li><a class="gn-icon gn-icon-photoshop">Photoshop files</a></li>
+  								</ul>
+                </li> -->
+  							<li>
+  								<a class="gn-icon gn-icon-archive">Archives</a>
+  								<ul class="gn-submenu">
+  									<li><a class="gn-icon gn-icon-article">Articles</a></li>
+  									<li><a class="gn-icon gn-icon-pictures">Images</a></li>
+  									<li><a class="gn-icon gn-icon-videos">Videos</a></li>
+  								</ul>
+  							</li>
+  						</ul>
+  					</div><!-- /gn-scroller -->
+  				</nav>
+  			</li>
+  			<li><a href="http://tympanus.net/codrops">Codrops</a></li>
+  			<li><a class="codrops-icon codrops-icon-prev" href="http://tympanus.net/Development/HeaderEffects/"><span>Previous Demo</span></a></li>
+  			<li><a class="codrops-icon codrops-icon-drop" href="http://www.xenmedia.net"><span>Xen Media</span></a></li>
+  		</ul>
+    </div>
+    <div class="main-section">
+      <button id="testbtn">testbtn</button><br />
+
+      파일 선택 : <input type="file" id="excelFile"/>
+
+      <div class="result-table-wrapper" id="displayExcelHtml">
+        <div class="result-header">
+          <h1 class="result-title">Pechanga Impression Report</h1>
+          <div class="result-report-info margin-30px">
+            <div class="result-report-date">
+              <div class="begin-date">
+                <strong>Report Begin Date: </strong><span class="begin-date-span"></span>
+              </div>
+              <div class="end-date">
+                <strong>Report End Date: </strong><span class="end-date-span"></span>
+              </div>
+              <div class="weeks-in-period">
+                <strong>Weeks in this Period: </strong><span class="weeks-in-period-span"></span>
+              </div>
+            </div>
+            <div class="result-report-createdby">
+              <div class="createdby">
+                <strong>Created By:</strong>
+              </div>
+              <div class="address">
+                WOOJUNG SON<br />
+                Xen Media, Inc.<br />
+                3701 Whilshire Blvd STE 414,<br />
+                Los Angeles, CA 90010<br />
+              </div>
+            </div>
+          </div>
+          <div class="result-summary">
+            <h2>Summary</h2>
+            <table class="result-summary-table margin-30px">
+              <thead>
+                <tr>
+                  <th>Total Impressions</th>
+                  <th>Total Locations</th>
+                  <th>Daily Impr. Per Location</th>
+                </tr>
+              </thead>
+              <tbody class="result-summary-tbody">
+                <tr>
+                  <td class="total-impressions"></td>
+                  <td class="total-locations"></td>
+                  <td class="daily-impr"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+          <h2 class="title-detail">Detail</h2>
+          <div class="result-table-inner-wrap">
+            <!-- <table class="result-table">
+              <thead>
+                <tr class="result-table-thead-tr">
+                  <th>Campaign</th>
+                  <th>Location</th>
+                  <th>Week</th>
+                  <th>Impressions</th>
+                </tr>
+              </thead>
+              <tbody class="result-tbody">
+
+              </tbody>
+          </table> -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/download.js"></script>
+  <script src="js/classie.js"></script>
+	<script src="js/gnmenu.js"></script>
+  <script>
+		new gnMenu( document.getElementById( 'gn-menu' ) );
+	</script>
+  <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+  <!-- <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <!-- <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script> -->
+
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>

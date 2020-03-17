@@ -1,0 +1,44 @@
+.container-fluid {border:1px solid black;}
+
+
+.header-section {position:relative;z-index:10;}
+.header-section #gn-menu {position:relative;}
+
+.main-section {position:relative;text-align:center;}
+
+.result-table-wrapper {margin:0 10%;}
+
+/* Report Zone */
+.margin-30px {margin:35px 0;}
+.result-table-wrapper {padding:0 50px;}
+.result-header {margin:0;}
+.result-title {font-weight:bold;font-size:45px;margin:0;margin-top:80px;}
+
+.result-report-info {display:flex;flex-flow:row wrap;}
+.result-report-info div {width:50%;}
+.result-report-info .result-report-date {text-align:left;}
+.result-report-info .result-report-date div {width:100%;}
+.result-report-info .result-report-createdby {text-align:center;}
+.result-report-info .result-report-createdby div {display:inline-block;text-align:left;}
+
+.result-summary {width:100%;}
+.result-summary .result-summary-table {width:100%;text-align:left;}
+.result-summary-table th, .result-summary-table td {padding-left:10px;}
+.result-summary .result-summary-table thead * {border:1px solid black;}
+.result-summary tr, .result-summary td {border:1px solid black;}
+
+.result-table-inner-wrap {position:relative;}
+.result-table {width:100%;text-align:left;border:none;margin-top:83px;margin-bottom:60px;}
+.result-table:first-child {margin-top:20px;}
+.result-table .result-table-thead-tr {width:100%;background-color:#6f6a6a;color:#fff;font-weight:300;padding-top:30px;margin-top:30px;}
+.result-table .result-table-thead-tr th {padding-top:6px;padding-bottom:6px;}
+.result-table th, .result-table td {padding-left:10px;}
+.result-table-thead th:nth-child(1) {width:15%;}
+.result-table-thead th:nth-child(2) {width:25%;}
+.result-table-thead th:nth-child(3) {width:35%;}
+.result-table-thead th:nth-child(4) {width:25%;}
+/* .result-table .result-table-tbody-tr:nth-child(even) {background-color:#d5d2d2;} */
+.result-table .result-tbody td {padding-top:3.5px;padding-bottom:3.5px;}
+.tbody-tr-white {background-color:#ffffff;}
+.tbody-tr-grey {background-color:#d5d2d2;}
+.pagination-div {position:relative;padding-bottom:20px;}
