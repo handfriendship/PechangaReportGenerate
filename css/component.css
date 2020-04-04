@@ -158,10 +158,13 @@
 .gn-menu-main .campaign-menu .checkbox-wrapper {position:absolute;right:30px;top:25px;margin-right:30px;display:inline-block;}
 
 .gn-menu-main .campaign-menu .gn-submenu li {position:relative;}
-.gn-menu-main .campaign-menu .gn-submenu li .checkbox-wrapper {position:absolute;right:30px;top:12px;margin-right:30px;display:inline-block;}
+.gn-menu-main .campaign-menu .gn-submenu li .checkbox-wrapper {position:absolute;right:20px;top:12px;margin-right:30px;display:inline-block;}
 .gn-menu-main .campaign-menu .gn-submenu .checkbox-wrapper > .checkbox-inner-wrap {display:flex;align-items:center;}
 .gn-menu-main .campaign-menu .gn-submenu .checkbox {border:1px solid black;}
-.gn-menu-main .campaign-menu .gn-submenu .checkbox-a {display:inline;}
+.gn-menu-main .campaign-menu .gn-submenu .checkbox-a {display:inline;font-size:16px;}
+
+.pagination-div {page-break-before: always;}
+.result-table {page-break-before:always;}
 input.gn-search {
 		position: relative;
 		z-index: 10;

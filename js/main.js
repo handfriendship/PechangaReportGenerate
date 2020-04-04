@@ -6,20 +6,44 @@ $(document).ready(function(){
     periodGenerator([['2020-01-01', '2020-01-05'], ['2020-01-21', '2020-01-26'], ['2020-01-27', '2020-01-31']]);
 
     var date = new Date(2020, 02, 28);
+  })
 
+  var userObj = new Object();
+  $('#regenerate').click(function(){
+    userObj = new Object();
+    var campaignArr = Array.from($('.gn-menu').children('.campaign-menu'));
+
+    campaignArr.forEach(element => {
+
+      var campaign = element.classList[1];
+      var liArr = Array.from($(element).find('.gn-submenu').children());
+
+
+      liArr.forEach(li => {
+        var temp_1 = $(li).attr('id').split('_')[2];
+        var temp_2 = $(li).attr('id').split('_')[3];
+
+        var date = unreadableDate(new Array($(li).attr('id').split('_')[2], $(li).attr('id').split('_')[3]));
+        userObj[campaign] = date;
+      })
+
+    })
+
+    console.log("userobj : ", userObj);
+    mainFunc(userObj);
   })
 
   var clickCount = 0;
   $('.datepicker-menu .checkbox').click(function(){
     console.log("click");
-    if(!$('#testDatepicker').val()){
-      alert("Please select the date");
+    if(!$('#startDatepicker').val() || !$('#endDatepicker').val()){
+      alert("Please select Start Date and End Date");
       return ;
     }
     // clickCount++;
-    // console.log("value : ", $('#testDatepicker').val());
+    // console.log("value : ", $('#startDatepicker').val());
     // var valueElement = `<li class="dateElement">
-    //     <a class="checkbox-a gn-icon gn-icon-illustrator">${$('#testDatepicker').val()}</a>
+    //     <a class="checkbox-a gn-icon gn-icon-illustrator">${$('#startDatepicker').val()}</a>
     //     <div class="checkbox-wrapper">
     //       <div class="checkbox-inner-wrap">
     //         <input class="delete-btn btn btn-outline-danger" type="button" name="check" value="Delete" />
@@ -31,40 +55,51 @@ $(document).ready(function(){
 
 
     var campaignArr = Array.from($('.gn-menu').children('.campaign-menu'));
-    console.log("campaignArr : ", campaignArr);
-    console.log("typeof : ", typeof(campaignArr));
+
     campaignArr.forEach(element => {
-      console.log("element : ", element);
+
+      var campaignName = $(element).attr('class').split(' ')[1];
+      var startDate = $('#startDatepicker').val().replace(/\//gi,'-');
+      var endDate = $('#endDatepicker').val().replace(/\//gi,'-');
+      var period = `${$('#startDatepicker').val()}~${$('#endDatepicker').val()}`;
       if($(element).find('input.checkbox').is(':checked')){
-        var valueElement = `<li class="dateElement">
-            <a class="checkbox-a gn-icon gn-icon-illustrator">${$('#testDatepicker').val()}</a>
+        var valueElement = `<li id="li_${campaignName}_${startDate}_${endDate}">
+            <a class="checkbox-a gn-icon gn-icon-illustrator">${period}</a>
             <div class="checkbox-wrapper">
               <div class="checkbox-inner-wrap">
-                <input class="delete-btn btn btn-outline-danger" type="button" name="check" value="Delete" />
+                <input id="date_${campaignName}_${startDate}_${endDate}" class="delete-btn btn btn-outline-danger" type="button" name="check" value="Delete" />
               </div>
             </div>
           </li>`;
 
         $(element).find('.gn-submenu').append(valueElement);
-        $('.delete-btn').on('click', {param1: $(this), param2: valueElement}, deleteDate);
+        $(`#date_${campaignName}_${startDate}_${endDate}`).on('click', {param1: `date_${campaignName}_${startDate}_${endDate}`, param2: valueElement, param3: `li_${campaignName}_${startDate}_${endDate}`}, deleteDate);
+
       }
     })
   })
 
   function deleteDate(event) {
     console.log("deleteDate called!");
-    console.log("param1 : ", event.data.param1);
+    console.log("param3 : ", event.data.param3);
 
     var valueElement = $(event.data.param2);
-    var dateElement = $(this).parent('.checkbox-inner-wrap').parent('.checkbox-wrapper').parent('.dateElement');
+    // var dateElement = $(`#${event.data.param3}`).parent('.checkbox-inner-wrap').parent('.checkbox-wrapper').parent('.dateElement');
+    // console.log("dateElement : ", dateElement);
+    $(`.campaign-menu .gn-submenu #${event.data.param3}`).remove();
 
   }
 
-  $("#testDatepicker").datepicker({
-  });
+  $("#startDatepicker").datepicker({});
+  $("#endDatepicker").datepicker({});
 
   function generateCampaigns(_campaigns){
-    console.log("_campaigns : ", _campaigns);
+    var campaignArr = Array.from($('.gn-menu').children('.campaign-menu'));
+
+    if(campaignArr.length != 0){
+      return ;
+    }
+
     _campaigns.forEach(element => {
       var campElement = $(`<li class="campaign-menu ${element}">
         <a class="checkbox-a gn-icon gn-icon-archive">${element}</a>
@@ -99,7 +134,7 @@ $(document).ready(function(){
 
   var rowObj = new Array();
 
-  var totalImpr = 0;
+
   // var resultTable = $(`<table class="result-table">
   //   <thead>
   //     <tr class="result-table-thead-tr">
@@ -118,11 +153,19 @@ $(document).ready(function(){
   const monDict = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06',
                  'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
   const decodemonDict = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun',
-                  7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'}
-  $('#excelFile').change(() => {
+                  7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'};
+
+  $(`#excelFile`).on('change', {}, mainFunc);
+  var input = null;
+  function mainFunc(_userObj){
     console.log("excelFile change call!");
+
+    console.log("userObj : ", _userObj);
     $('.result-table-inner-wrap').html('');
-    var input = event.target;
+    // var input = event.target;
+    if(!input){
+      input = event.target;
+    }
     var reader = new FileReader();
     reader.onload = () => {
         var fileData = reader.result;
@@ -140,7 +183,7 @@ $(document).ready(function(){
         var impressionObj = {};
         var locationWithoutDupl = new Array();
         var weekWithoutDupl = new Array();
-
+        var totalImpr = 0;
 
 
         campaigns = Array.from(new Set(rowObj.map(obj => {
@@ -168,9 +211,24 @@ $(document).ready(function(){
             return campaign.Week;
           }))));
         })
+
         var linearWeeks = weeks.map(week => {
           return linearPeriodGenerator(week);
         })
+        console.log("userObj : ", _userObj);
+        console.log("linearWeeks : ", linearWeeks);
+        if(_userObj.originalEvent == undefined){
+          campaigns.forEach((campaign, index, array) => {
+            var tempArr = _userObj[campaign];
+
+
+            if(tempArr){
+              console.log("tempArr : ", tempArr);
+              linearWeeks[index] = linearPeriodGenerator(new Array(tempArr));
+            }
+          })
+        }
+        console.log("after linearWeeks : ", linearWeeks);
         weekWithoutDupl = Array.from(new Set(rowObj.map(obj => {
           return obj.Week;
         })))
@@ -198,7 +256,8 @@ $(document).ready(function(){
 
         console.log("campaigns : ", campaigns);
         console.log("object_per_campaign : ", object_per_campaign);
-        console.log("locations : ", locations);
+        console.log("locations : ", temp1);
+        console.log("linearWeeks : ", linearWeeks);
         console.log("weeks : ", weeks);
         console.log("impressions : ", impressions);
         console.log("impressionObj : ", impressionObj);
@@ -206,11 +265,11 @@ $(document).ready(function(){
         var trCount = 0;
         var tableCount = 0;
         object_per_campaign.forEach(obj => {
-          console.log("obj : ", obj);
+
           obj._location.forEach(location => {
             obj._week.forEach(sortedWeek => {
               if(trCount % 46 == 28 || trCount == 0){
-                console.log("trCount, tableCount : ", trCount, ' and ', tableCount)
+
                 var resultTable = $(`<table class="result-table">
                   <thead>
                     <tr class="result-table-thead-tr">
@@ -228,7 +287,7 @@ $(document).ready(function(){
 
                 tableCount++;
                 $(`.result-table-inner-wrap`).append(resultTable.addClass(`result-table-${tableCount}`));
-                $('.result-table-inner-wrap').append($(`<div class="pagination-div pagination-div-${tableCount}"></div>`));
+                $('.result-table-inner-wrap').append($(`<div style="page-break-after:always" class="pagination-div pagination-div-${tableCount}"></div>`));
 
               }
               if(trCount % 2 == 0){
@@ -254,14 +313,11 @@ $(document).ready(function(){
           $(`.pagination-div`).eq(i).text(`${i+1} of ${totalPage}`);
         }
 
-        calcImpr(totalImpr, locationWithoutDupl, weekWithoutDupl)
-
+        calcImpr(totalImpr, locationWithoutDupl, weekWithoutDupl);
 
     };
     reader.readAsBinaryString(input.files[0]);
-
-
-  })
+  }
 
   function calcImpr(paramImpr, _locationWithoutDupl, _weekWithoutDupl) {
     var beginDate = readableDate(_weekWithoutDupl[0])[0];
@@ -378,32 +434,37 @@ $(document).ready(function(){
     var readableWeekArr = weekArr.map(element => {
       return readableDate(element);
     })
+    console.log("readableWeekArr : ", readableWeekArr);
 
-    if(!linearCheck(readableWeekArr)){
-      var tempArr =  periodGenerator(readableWeekArr);
-      var resultArr = tempArr.map(temp => {
-        return unreadableDate(temp);
-      })
-      return resultArr;
-    } else {
-      return weekArr;
-    }
 
-  }
-
-  function linearCheck(testArr){
-    return testArr.reduce((cumulated, currentValue, currentIndex, array) => {
-      var value = (dateDiff(currentValue[0], array[currentIndex-1][1]) == 1);
-      if(currentIndex == 1){
-        cumulated = true;
-      }
-
-      return (value && cumulated);
+    var tempArr =  periodGenerator(readableWeekArr);
+    console.log("tempArr : ", tempArr);
+    var resultArr = tempArr.map(temp => {
+      return unreadableDate(temp);
     })
+    return resultArr;
+    // if(!linearCheck(readableWeekArr)){
+    //   return resultArr;
+    // } else {
+    //   return weekArr;
+    // }
+
   }
+
+  // function linearCheck(testArr){
+  //   return testArr.reduce((cumulated, currentValue, currentIndex, array) => {
+  //     var value = (dateDiff(currentValue[0], array[currentIndex-1][1]) == 1);
+  //     if(currentIndex == 1){
+  //       cumulated = true;
+  //     }
+  //
+  //     return (value && cumulated);
+  //   })
+  // }
 
 
   function periodGenerator(weekArr){
+    console.log("weekArr : ", weekArr);
     var startDate = weekArr[0][0];
     var endDate = weekArr[weekArr.length-1][1];
 
